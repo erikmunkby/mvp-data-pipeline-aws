@@ -1,6 +1,6 @@
 # MVP Data Pipeline
 
-![Deploy](https://github.com/erikmunkby/mvp-data-pipeline-aws/workflows/CDK%20Deploy/badge.svg?branch=main)
+![Deploy](https://github.com/erikmunkby/mvp-data-pipeline-aws/workflows/CDK%20Deploy/badge.svg?branch=master)
 
 Contains code for:
 
@@ -56,7 +56,7 @@ Must have an AWS account with deploy access rights.
     
 - Build a jupyter kernel that the notebooks can use
 
-    `$ run python -m ipykernel install --user --name mvp-pipeline`
+    `$ python -m ipykernel install --user --name mvp-pipeline`
     
 - Load up a jupyter notebook
 
