@@ -32,7 +32,7 @@ class PipelineStack(core.Stack):
             s3_destination_configuration={
                 'bucketArn': delivery_bucket.bucket_arn,
                 'bufferingHints': {
-                    'intervalInSeconds': 60,  # The recommended setting is 900 (maximum for firehose)
+                    'intervalInSeconds': 900,  # The recommended setting is 900 (maximum for firehose)
                     'sizeInMBs': 5
                 },
                 'compressionFormat': 'UNCOMPRESSED',
