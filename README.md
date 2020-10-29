@@ -43,7 +43,10 @@ Must have an AWS account with deploy access rights.
     - AWSPUBLICKEY
     - AWSSECRETKEY
     
-- Push to Main and watch your github actions deploy!
+- Change names and ids for stack resources (in `pipeline_stack.py`). 
+Bucket name is required to change as it has to be globally unique, rest optional.
+    
+- Push to Master and watch your github actions deploy!
 
 ## Set up Jupyter
 - Start the poetry shell (if you haven't already)
