@@ -61,3 +61,11 @@ Must have an AWS account with deploy access rights.
 - Load up a jupyter notebook
 
     `$ jupyter notebook`
+    
+- Add `api_creds.json` file with the following parameters filled:
+```
+{
+    "endpoint": "https://*******.amazonaws.com/prod/",
+    "api-key": "******"
+}
+```
