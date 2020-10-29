@@ -72,3 +72,11 @@ Bucket name is required to change as it has to be globally unique, rest optional
     "api-key": "******"
 }
 ```
+
+## Adding Packages
+If you want to install and work with new python packages you can add them by:
+
+    $ poetry add <package name here>
+
+If your Lambda also needs the package installed, add it in the `requirements.txt` file found in your lambda folder. 
+The github actions will install and package them for you.
