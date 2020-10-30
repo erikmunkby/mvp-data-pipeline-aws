@@ -15,7 +15,8 @@ class PipelineStack(core.Stack):
 
         # Bucket used to deliver events
         delivery_bucket = aws_s3.Bucket(
-            self, id='my-event-storage-bucket', bucket_name='my-event-storage-bucket', public_read_access=False
+            self, id='my-event-storage-bucket', bucket_name='my-event-storage-bucket',
+            block_public_access=aws_s3.BlockPublicAccess.BLOCK_ALL
         )
 
         # ---- Below is firehose related code ----
