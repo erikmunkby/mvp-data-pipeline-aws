@@ -1,4 +1,4 @@
-# This workflow deploys the YMOL lambda code to the QA/development environment.
+# This workflow deploys the pipeline to aws on push.
 
 name: CDK Deploy
 
