@@ -7,9 +7,9 @@ from src.stacks.pipeline_stack import PipelineStack
 
 app = core.App()
 # Production stack
-PipelineStack(app, 'mvp-data-pipeline-aws', region='eu-west-1', is_qa_stack=False)
+PipelineStack(app, 'mvp-data-pipeline-aws', env={'region': 'eu-west-1'}, is_qa_stack=False)
 
 # QA/Staging Stack
-PipelineStack(app, 'mvp-data-pipeline-aws-qa', region='eu-central-1', is_qa_stack=True)
+PipelineStack(app, 'mvp-data-pipeline-aws-qa', env={'region': 'eu-central-1'}, is_qa_stack=True)
 
 app.synth()
