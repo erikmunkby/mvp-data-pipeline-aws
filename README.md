@@ -1,6 +1,8 @@
 # MVP Data Pipeline
 
-![Deploy](https://github.com/erikmunkby/mvp-data-pipeline-aws/workflows/CDK%20Deploy/badge.svg?branch=master)
+Prod: ![Deploy](https://github.com/erikmunkby/mvp-data-pipeline-aws/workflows/CDK%20Deploy/badge.svg?branch=master)
+, QA: ![Deploy](https://github.com/erikmunkby/mvp-data-pipeline-aws/workflows/CDK%20Deploy/badge.svg?branch=qa)
+
 
 Contains code for:
 
@@ -11,7 +13,7 @@ Contains code for:
 ## Requirements
 Must have an AWS account with deploy access rights.
 
-## Development
+## Deploy
 
 - Fork the repository
 - Install [poetry](https://python-poetry.org/)
@@ -47,6 +49,14 @@ Must have an AWS account with deploy access rights.
 Bucket name is required to change as it has to be globally unique, rest optional.
     
 - Push to Master and watch your github actions deploy!
+
+## Development
+If you want to make changes there is also a qa branch. Pushing against the qa
+branch will deploy everything with separate naming and on a different region.
+A useful cdk function when making changes is cdk diff that will tell you what
+changes will be made to the stack.
+
+    $ cdk diff
 
 ## Set up Jupyter
 - Start the poetry shell (if you haven't already)
