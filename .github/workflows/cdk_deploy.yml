@@ -13,11 +13,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Set stack to Prod
+    - name: Set stack to Prod Maybe
       if: endsWith(github.ref, '/master')
       run: |
         echo "STACK_NAME=mvp-data-pipeline-aws" >> $GITHUB_ENV
-    - name: Set stack to QA
+    - name: Set stack to QA Maybe
       if: endsWith(github.ref, '/qa')
       run: |
         echo "STACK_NAME=mvp-data-pipeline-aws-qa" >> $GITHUB_ENV
@@ -50,7 +50,7 @@ jobs:
       uses: youyo/aws-cdk-github-actions@v1
       with:
         cdk_subcommand: 'deploy'
-        cdk_stack: $STACK_NAME
+        cdk_stack: ${{ env.STACK_NAME }}
         actions_comment: false
         working_dir: '.'
       env:
