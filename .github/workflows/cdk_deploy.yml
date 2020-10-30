@@ -4,13 +4,24 @@ name: CDK Deploy
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
+      - qa
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Set stack to Prod
+      if: endsWith(github.ref, '/master')
+      run: |
+        echo "STACK_NAME=mvp-data-pipeline-aws" >> $GITHUB_ENV
+    - name: Set stack to QA
+      if: endsWith(github.ref, '/qa')
+      run: |
+        echo "STACK_NAME=mvp-data-pipeline-aws-qa" >> $GITHUB_ENV
+
     - uses: actions/checkout@v2
 
     - name: Set up Python 3.8
@@ -39,7 +50,7 @@ jobs:
       uses: youyo/aws-cdk-github-actions@v1
       with:
         cdk_subcommand: 'deploy'
-        cdk_stack: 'mvp-data-pipeline-aws'
+        cdk_stack: $STACK_NAME
         actions_comment: false
         working_dir: '.'
       env:

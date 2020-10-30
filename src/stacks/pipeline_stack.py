@@ -10,25 +10,29 @@ from aws_cdk import (
 
 class PipelineStack(core.Stack):
 
-    def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:
+    def __init__(self, scope: core.Construct, id: str, is_qa_stack=False, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
+
+        def qa_maybe(id_str: str) -> str:
+            return id_str if not is_qa_stack else id_str + '-qa'
 
         # Bucket used to deliver events
         delivery_bucket = aws_s3.Bucket(
-            self, id='my-event-storage-bucket', bucket_name='my-event-storage-bucket',
+            self, id=qa_maybe('my-event-storage-bucket'), bucket_name=qa_maybe('my-event-storage-bucket'),
             block_public_access=aws_s3.BlockPublicAccess.BLOCK_ALL
         )
 
         # ---- Below is firehose related code ----
         # Since firehose is not yet cdk ready we need to do everything the old way with defining roles
         role = aws_iam.Role(
-            self, id='my-firehose-delivery-role', assumed_by=aws_iam.ServicePrincipal('firehose.amazonaws.com')
+            self, id=qa_maybe('my-firehose-delivery-role'),
+            assumed_by=aws_iam.ServicePrincipal('firehose.amazonaws.com')
         )
         delivery_bucket.grant_write(role)
 
         # Everything that is not CDK ready still exists like Cfn (Cloudformation?) objects
         firehose = aws_kinesisfirehose.CfnDeliveryStream(
-            self, id='my-pipeline-firehose', delivery_stream_name='my-pipeline-firehose',
+            self, id=qa_maybe('my-pipeline-firehose'), delivery_stream_name=qa_maybe('my-pipeline-firehose'),
             delivery_stream_type='DirectPut',
             s3_destination_configuration={
                 'bucketArn': delivery_bucket.bucket_arn,
@@ -37,8 +41,8 @@ class PipelineStack(core.Stack):
                     'sizeInMBs': 5
                 },
                 'compressionFormat': 'UNCOMPRESSED',
-                'prefix': 'events/',
-                'errorOutputPrefix': 'delivery_error/',
+                'prefix': 'events/',  # This is the folder the events will end up in
+                'errorOutputPrefix': 'delivery_error/',  # Folder in case of delivery error
                 'roleArn': role.role_arn
             }
         )
@@ -52,7 +56,7 @@ class PipelineStack(core.Stack):
         # ---- API GW + Lambda code ----
         api_lambda = aws_lambda.Function(
             self,
-            id='my-api-gw-lambda',
+            id=qa_maybe('my-api-gw-lambda'),
             runtime=aws_lambda.Runtime.PYTHON_3_8,
             code=aws_lambda.Code.asset('src/lambda_code/api_gw_lambda'),
             handler='main.handler',
@@ -68,17 +72,17 @@ class PipelineStack(core.Stack):
 
         # Create the lambda that will receive the data messages
         api_gw = aws_apigateway.LambdaRestApi(
-            self, id='my-api-gw', handler=api_lambda, proxy=False,
-            deploy_options=aws_apigateway.StageOptions(stage_name='prod')
+            self, id=qa_maybe('my-api-gw'), handler=api_lambda, proxy=False,
+            deploy_options=aws_apigateway.StageOptions(stage_name='qa' if is_qa_stack else 'prod')
         )
 
         # Add API query method
         api_gw.root.add_resource('send_data').add_method('GET', api_key_required=True)
 
         # Generate an API key and add it to a usage plan
-        api_key = api_gw.add_api_key('MyPipelinePublicKey')
+        api_key = api_gw.add_api_key(qa_maybe('MyPipelinePublicKey'))
         usage_plan = api_gw.add_usage_plan(
-            id='my-pipeline-usage-plan',
+            id=qa_maybe('my-pipeline-usage-plan'),
             name='standard',
             api_key=api_key,
             throttle=aws_apigateway.ThrottleSettings(
